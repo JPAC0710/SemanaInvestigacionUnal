@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Cada idea abre otra conexión</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,700&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{--night:#0e1022;--ink:#f3eee3;--dim:#b9b6c9;--coral:#ff6f59;--amber:#ffc857;--mint:#4fd1b5;--violet:#9b8cff;--sky:#56a8ff;--pink:#ff8fc7;color-scheme:dark;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*,*::before,*::after{box-sizing:inherit}
+body{margin:0;background:var(--night);color:var(--ink);font:400 16px/1.55 "DM Sans",system-ui,sans-serif}
+canvas{position:fixed;inset:0;z-index:0;touch-action:pan-y;display:block}
+#bar{position:fixed;top:0;left:0;height:3px;width:0;background:linear-gradient(90deg,var(--coral),var(--amber),var(--mint),var(--sky),var(--violet));z-index:5}
+#top{position:fixed;z-index:4;top:calc(14px + env(safe-area-inset-top,0px));left:18px;right:18px;display:flex;justify-content:space-between;gap:12px;font-size:13px;color:var(--dim);pointer-events:none}
+#cnt b{color:var(--amber);font-weight:700}
+.step{position:relative;z-index:2;min-height:100svh;display:flex;align-items:flex-end;padding:0 16px 28px;pointer-events:none}
+.card{pointer-events:auto;max-width:480px;padding:20px 22px;border-radius:16px;background:rgba(14,16,34,.8);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border:1px solid rgba(243,238,227,.14)}
+.card h2{font:700 clamp(26px,3.4vw,38px)/1.08 Fraunces,Georgia,serif;margin:0 0 10px;letter-spacing:-.01em}
+.card p{margin:0 0 10px;color:#e4e0ee;max-width:60ch}
+.card p:last-child{margin-bottom:0}
+.hint{color:var(--amber)!important;font-weight:500;font-size:14px}
+.big{font:700 68px/1 Fraunces,Georgia,serif;display:inline-block;margin-right:12px;vertical-align:-6px}
+.bigline{display:flex;align-items:center;gap:6px;margin-bottom:6px;color:var(--dim)}
+.note{font-size:12.5px;color:var(--dim)!important;border-top:1px solid rgba(243,238,227,.14);padding-top:10px;margin-top:14px!important}
+.hero .card{background:none;border:0;backdrop-filter:none;-webkit-backdrop-filter:none;max-width:640px;padding:0}
+.hero h1{font:700 clamp(42px,8vw,92px)/.98 Fraunces,Georgia,serif;margin:0 0 16px;letter-spacing:-.025em;text-shadow:0 2px 30px #0e1022}
+.hero p{font-size:18px;text-shadow:0 1px 14px #0e1022}
+#info{position:fixed;z-index:4;pointer-events:none;top:calc(52px + env(safe-area-inset-top,0px));left:16px;right:16px;padding:14px 16px;border-radius:14px;background:rgba(14,16,34,.9);border:1px solid rgba(243,238,227,.2);opacity:0;transform:translateY(-6px);transition:opacity .2s,transform .2s}
+#info.on{opacity:1;transform:none}
+#info small{font-weight:700;font-size:12.5px}
+#info h3{font:700 20px/1.15 Fraunces,Georgia,serif;margin:3px 0 6px}
+#info p{margin:0;font-size:14px;color:#e4e0ee}
+@media(min-width:900px){
+ .step{align-items:center;padding:0 0 0 6vw}
+ .card{max-width:410px}
+ #info{top:auto;left:auto;right:4vw;bottom:5vh;width:340px}
+}
+#dots{position:fixed;z-index:4;right:10px;top:50%;transform:translateY(-50%);display:flex;flex-direction:column;gap:9px}
+#dots button{all:unset;cursor:pointer;width:9px;height:9px;border-radius:50%;background:rgba(243,238,227,.3);transition:transform .2s,background .2s}
+#dots button.on{background:var(--amber);transform:scale(1.6)}
+#dots button:focus-visible{outline:2px solid var(--ink);outline-offset:3px}
+#play{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}
+#play input{flex:1 1 100%;padding:11px 13px;border-radius:10px;border:1px solid rgba(243,238,227,.3);background:rgba(243,238,227,.07);color:var(--ink);font:inherit}
+#play input:focus-visible{outline:2px solid var(--amber)}
+#play button{flex:1;padding:10px 8px;border-radius:10px;border:0;font:700 14px "DM Sans",sans-serif;color:#0e1022;cursor:pointer}
+#play button:hover{filter:brightness(1.15)}
+@media(prefers-reduced-motion:reduce){#info{transition:none}}
+</style>
+</head>
+<body>
+<div id="bar"></div>
+<div id="top"><span>Estrategia de marketing cultural · Tecnológico de Artes Débora Arango</span><span id="cnt"></span></div>
+<aside id="info" aria-live="polite"><small id="ik"></small><h3 id="it"></h3><p id="ip"></p></aside>
+
+<section class="step hero" data-mode="hero"><div class="card">
+<h1>Cada idea abre otra conexión</h1>
+<p>Una experiencia participativa de ciencia, arte y tecnología. Aquí el conocimiento no se acumula: se encuentra.</p>
+<p class="hint">Haz clic en el cielo para plantar tu primera idea. Después, desplázate.</p>
+</div></section>
+
+<section class="step" data-mode="iso"><div class="card">
+<h2>Hoy, las ideas viajan solas</h2>
+<p>El conocimiento de la institución circula fragmentado entre programas, intereses y espacios. Cada punto es un aporte valioso, pero nadie ve con qué otro podría dialogar.</p>
+<p class="hint">Mueve el cursor: los puntos se acercan, pero no se tocan.</p>
+</div></section>
+
+<section class="step" data-mode="link"><div class="card">
+<h2>El hallazgo: hacer visibles los vínculos</h2>
+<p>La necesidad que prioriza la estrategia es dar continuidad a los aportes: pasar de respuestas aisladas a relaciones visibles, comprensibles y compartidas entre sedes.</p>
+<p class="hint">Planta ideas. Cada una se engancha a otras tres.</p>
+</div></section>
+
+<section class="step" data-mode="six"><div class="card">
+<div class="bigline"><span class="big" style="color:var(--coral)">6</span> componentes, una sola estrategia</div>
+<h2>Seis decisiones que se sostienen entre sí</h2>
+<p>Propósito, actores, valor, concepto, experiencia e impacto. Cada hilo muestra cómo una decisión orienta, activa o verifica a otra.</p>
+<p class="hint">Toca un nodo para leer la decisión consolidada.</p>
+</div></section>
+
+<section class="step" data-mode="actors"><div class="card">
+<div class="bigline"><span class="big" style="color:var(--amber)">0</span> alianzas externas confirmadas</div>
+<h2>Una red que crece por anillos</h2>
+<p>Se empieza por estudiantes, docentes y semilleros del Tecnológico. Después se proponen instituciones educativas, bibliotecas, museos, casas de cultura y laboratorios. Son públicos potenciales, no comunidades ya vinculadas.</p>
+<p class="hint">Cada anillo es una fase de expansión. Toca los actores.</p>
+</div></section>
+
+<section class="step" data-mode="exp"><div class="card">
+<h2>Descubrir, aportar, conectar, volver</h2>
+<p>Una pregunta interpela. La persona responde. Recibe una devolución visual de cómo su idea se vincula con otras. Y puede regresar a explorar cómo crece la conversación.</p>
+<p class="hint">Sigue el flujo y toca cada momento.</p>
+</div></section>
+
+<section class="step" data-mode="phases"><div class="card">
+<div class="bigline"><span class="big" style="color:var(--sky)">4</span> fases, cada una con una condición</div>
+<h2>No se avanza sin aprender</h2>
+<p>De la validación interna a la red entre espacios, cada fase exige algo antes de abrir la siguiente: aprendizajes, permisos, protocolos y acuerdos de privacidad.</p>
+<p class="hint">Toca una fase para ver qué la habilita.</p>
+</div></section>
+
+<section class="step" data-mode="indic"><div class="card">
+<div class="bigline"><span class="big" style="color:var(--pink)">8</span> señales para saber si funciona</div>
+<h2>¿Cómo sabremos que funciona?</h2>
+<p>Cuatro indicadores de corto plazo a la izquierda y cuatro de mediano plazo a la derecha, todos orbitando la meta: una cultura de conocimiento compartido. Se recogerán con conteo que cuida la privacidad, observación de pruebas, preguntas de salida y análisis agregado.</p>
+<p class="hint">Ninguna es una métrica obtenida todavía. Toca cada señal.</p>
+</div></section>
+
+<section class="step" data-mode="impact"><div class="card">
+<div class="bigline"><span class="big" style="color:var(--mint)">2</span> de 7 piezas existen hoy</div>
+<h2>Lo que hay y lo que falta</h2>
+<p>Solo hay avances de diseño de interfaz y recolección de datos. La devolución visual, los pilotos, las alianzas y la red entre sedes siguen pendientes. Los nodos punteados son hipótesis por probar.</p>
+<p class="note">Nota metodológica: las interacciones, la visualización de relaciones y la articulación entre sedes son decisiones de diseño propuestas; no son funcionalidades implementadas ni resultados validados.<br><br>Juan Pablo Vázquez Zuleta · Juan Pablo Avendaño Cuervo · Corte 2 · noviembre de 2026</p>
+</div></section>
+
+<section class="step" data-mode="play"><div class="card">
+<h2>Tu turno: planta una idea</h2>
+<p>Escribe una pregunta o una idea y elige desde qué saber la haces. Se anclará a esa disciplina y buscará conexión con las ideas más cercanas.</p>
+<div id="play"><input id="idt" maxlength="50" placeholder="¿Qué te pregunta el mundo hoy?" aria-label="Tu idea"><button style="background:var(--coral)" data-d="0">Ciencia</button><button style="background:var(--violet)" data-d="1">Arte</button><button style="background:var(--mint)" data-d="2">Tecnología</button></div>
+<p class="note">Es una maqueta de la experiencia: tu idea solo vive en esta pantalla, no se guarda ni se envía.</p>
+</div></section>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.9.4/p5.min.js"></script>
+<script>
+const C={coral:'#ff6f59',amber:'#ffc857',mint:'#4fd1b5',violet:'#9b8cff',sky:'#56a8ff',pink:'#ff8fc7'};
+const PAL=Object.values(C);
+const rgb=h=>[1,3,5].map(i=>parseInt(h.substr(i,2),16));
+const rgba=(h,a)=>{const r=rgb(h);return `rgba(${r[0]},${r[1]},${r[2]},${Math.max(0,a).toFixed(2)})`};
+const rr=(c,a)=>`rgba(${c[0]},${c[1]},${c[2]},${Math.max(0,a).toFixed(2)})`;
+const pol=(r,d)=>[r*Math.cos(d*Math.PI/180),r*Math.sin(d*Math.PI/180)];
+const mk=(l,c,k,t,p,xy,o={})=>Object.assign({l,c,k,t,p,x:xy[0],y:xy[1]},o);
+
+const six=[
+['Propósito',C.coral,'Visibilizar saberes colectivos','Poner en circulación conocimientos, preguntas y perspectivas sobre ciencia, arte y tecnología, para una cultura de participación y construcción colectiva.'],
+['Actores',C.amber,'Estudiantes con mediadores institucionales','Se conecta primero con estudiantes y mediadores del Tecnológico; después se construyen alianzas con otras instituciones y espacios culturales.'],
+['Valor',C.mint,'Aportar y descubrir relaciones','Cada persona aporta una idea, descubre otros puntos de vista y reconoce conexiones que normalmente permanecen dispersas.'],
+['Concepto',C.sky,'«Cada idea abre otra conexión»','Tono curioso, cercano y experimental. Símbolos: nodos, hilos, constelaciones, mapas de vínculos y rutas que crecen.'],
+['Experiencia',C.violet,'Descubrir, aportar, conectar, volver','Una pregunta que interpela, un aporte propio y una devolución visual de cómo se vincula con otros. Es lo primero que hay que ajustar.'],
+['Impacto',C.pink,'Participación y reconocimiento interdisciplinar','Se reconocerá con registros de aportes, observación y testimonios de pruebas futuras. Son evidencias previstas, aún no obtenidas.']
+].map((d,i)=>mk(d[0],d[1],'Decisión consolidada',d[2],d[3],pol(.8,i*60-90),{n:'0'+(i+1)}));
+
+const actors=[
+mk('Estudiantes',C.coral,'Anillo central · Tecnológico','Participación y coautoría','Aportan preguntas, datos, ideas y conexiones. Son el público prioritario de la fase inicial.',[0,0],{sz:1.35}),
+mk('Docentes y semilleros',C.amber,'Anillo 1 · Tecnológico','Mediación de contenidos','Aportan contexto y diversidad de perspectivas; cocrean las preguntas.',pol(.45,200)),
+mk('Comunicaciones y eventos',C.mint,'Anillo 1 · Tecnológico','Circulación situada','Aportan invitación, visibilidad y convocatoria.',pol(.45,340)),
+mk('Instituciones educativas',C.sky,'Anillo 2 · Pilotos','Pilotos interinstitucionales','Aportan diversidad disciplinar y nuevos grupos. Falta contacto, permisos y acuerdos.',pol(.75,100)),
+mk('Bibliotecas y casas de cultura',C.violet,'Anillo 3 · Espacios culturales','Mediación comunitaria','Aportan participación abierta y contextualización local. Sin convenios confirmados.',pol(1,175)),
+mk('Museos y centros culturales',C.pink,'Anillo 3 · Espacios culturales','Exhibición participativa','Aportan públicos diversos y nuevas conversaciones. Sin convenios confirmados.',pol(1,285)),
+mk('Laboratorios y festivales',C.amber,'Anillo 3 · Espacios culturales','Experimentación y circulación','Aportan retroalimentación y difusión situada. Sin convenios confirmados.',pol(1,25))
+];
+
+const exp=[
+mk('Antes',C.amber,'Respuesta diseñada: invitación contextual y clara','Descubre una pregunta y se aproxima','Carteles, piezas digitales y preguntas provocadoras que comunican cómo participar, sin confundir difusión con interacción.',[-.95,.45]),
+mk('Durante',C.coral,'Respuesta diseñada: registro y relación visual previstos','Aporta una idea o responde','Elige o escribe una respuesta y ve cómo se vincularía con otras. La interfaz está en construcción.',[-.3,-.35]),
+mk('Después',C.violet,'Respuesta diseñada: acceso a una red evolutiva','Explora o retorna','La posibilidad de volver, descubrir nuevas relaciones y compartir hallazgos. Depende del registro y la visualización.',[.35,.4]),
+mk('Expansión',C.mint,'Por desarrollar: diálogo entre espacios','Participa desde otro contexto','Preguntas locales que dialogan con aportes de otras comunidades. Es una posibilidad futura, no una función operativa.',[.95,-.3])
+];
+
+const phases=[
+mk('Validación interna',C.sky,'Para avanzar: aprendizajes documentados y ajustes de interfaz','Probar claridad del recorrido y registro de aportes','En el Tecnológico, con estudiantes.',[-.9,.6],{n:'1',sz:.7}),
+mk('Pilotos educativos',C.mint,'Para avanzar: aliado, permiso y mediación definidos','Adaptar preguntas a otras instituciones','Pilotos con grupos de formación técnica y superior.',[-.3,.2],{n:'2',sz:.95}),
+mk('Espacios culturales',C.amber,'Para avanzar: formato portátil y protocolo de operación','Activar bibliotecas, museos y casas de cultura','Intervenciones temporales con mediación breve.',[.3,-.2],{n:'3',sz:1.2}),
+mk('Red entre espacios',C.pink,'Para avanzar: viabilidad técnica, privacidad y gobernanza acordadas','Relacionar aportes entre contextos distintos','Conectar sedes y territorios solo cuando existan acuerdos claros.',[.9,-.6],{n:'4',sz:1.5})
+];
+
+const impact=[
+mk('Diseño de interfaz',C.mint,'Existe hoy','Prototipo de interfaz en construcción','Avance real que orienta las interacciones planteadas.',[-.75,-.25],{sz:1.2}),
+mk('Recolección de datos',C.mint,'Existe hoy','Datos recolectados','Avance real que permite organizar la información; falta definir el esquema y el reconocimiento de cada aporte.',[-.75,.35],{sz:1.2}),
+mk('Devolución visual',C.amber,'Pendiente','Representación cambiante de relaciones','Debe desarrollarse y probarse con personas usuarias.',[.1,-.6],{h:1}),
+mk('Pilotos',C.amber,'Pendiente','Activación en un espacio por definir','Requiere institución, mediación y consentimiento.',[.8,-.3],{h:1}),
+mk('Alianzas externas',C.amber,'Pendiente','Ninguna institución confirmada','Cada vinculación requerirá contacto, acuerdos y adaptación.',[.8,.35],{h:1}),
+mk('Red entre sedes',C.amber,'Pendiente','Posibilidad futura','No es una función operativa; exige privacidad y gobernanza acordadas.',[.1,.7],{h:1}),
+mk('Evidencia de uso',C.amber,'Pendiente','Sin pruebas concluyentes todavía','Se obtendrá con registros, observación y testimonios.',[.35,0],{h:1})
+];
+
+const ci=[['Participación','Cuántas personas se acercan y participan, contadas con criterios de privacidad.'],['Aportes completos','Cuántos aportes llegan completos hasta el registro.'],['Comprensión de instrucciones','Si la gente entiende qué hacer sin ayuda; se observa en recorridos de prueba.'],['Diversidad de programas','Variedad de programas y tipos de público que aportan.']];
+const cm=[['Pilotos externos','Instituciones que realizan pilotos de la experiencia.'],['Retorno de participantes','Personas que vuelven a explorar la red.'],['Conexiones exploradas','Relaciones entre saberes que la gente descubre y recorre.'],['Encuentros sostenidos','Encuentros interinstitucionales que se mantienen en el tiempo.']];
+const ys=[-.75,-.25,.25,.75];
+const indic=[mk('Conocimiento compartido',C.amber,'La meta','Una cultura de conocimiento compartido','Se considerará alcanzada con participación diversa y personas capaces de identificar relaciones entre saberes. Son evidencias previstas, aún no obtenidas.',[0,0],{sz:1.5}),
+...ci.map((d,i)=>mk(d[0],C.sky,'Indicador de corto plazo',d[0],d[1],[i%3?-.62:-.88,ys[i]])),
+...cm.map((d,i)=>mk(d[0],C.pink,'Indicador de mediano plazo',d[0],d[1],[i%3?.62:.88,ys[i]]))];
+const play=[['Ciencia',C.coral,'Preguntas que buscan explicar'],['Arte',C.violet,'Preguntas que buscan expresar'],['Tecnología',C.mint,'Preguntas que buscan construir']].map((d,i)=>mk(d[0],d[1],'Disciplina',d[2],'Ancla tu idea aquí y verás cómo se enlaza con otras cercanas.',pol(.8,[-90,30,150][i]),{sz:1.35}));
+const TINT={hero:C.violet,iso:C.sky,link:C.coral,six:C.coral,actors:C.amber,exp:C.violet,phases:C.sky,indic:C.pink,impact:C.mint,play:C.amber};
+let tint=rgb(C.violet);
+const M={
+hero:{nodes:[],edges:[],link:150},
+iso:{nodes:[],edges:[],link:0},
+link:{nodes:[],edges:[],link:165},
+six:{nodes:six,edges:[[0,2],[0,5],[1,4],[2,3],[3,4],[2,4]],link:90},
+actors:{nodes:actors,edges:[[0,1],[0,2],[0,3],[3,4],[3,5],[3,6]],link:90,rings:[.45,.75,1]},
+exp:{nodes:exp,edges:[[0,1],[1,2],[2,3]],link:90},
+phases:{nodes:phases,edges:[[0,1],[1,2],[2,3]],link:90},
+impact:{nodes:impact,edges:[[0,2],[1,2],[1,6],[2,3],[6,4],[3,4],[6,5],[2,6]],link:90,dash:1}
+};
+
+M.indic={nodes:indic,edges:indic.slice(1).map((_,i)=>[0,i+1]),link:90};
+M.play={nodes:play,edges:[[0,1],[1,2],[2,0]],link:120};
+let ctx,P=[],nodes=[],mode='hero',curL=150,ambA=1,ringA=0,ep=0,hov=-1,pin=-1,mx=-999,my=-999,over=false,ideas=0,shown='';
+let cx,cy,S,R,desk;
+const calm=matchMedia('(prefers-reduced-motion:reduce)').matches;
+const el=id=>document.getElementById(id);
+
+function layout(){
+ desk=windowWidth>=900;
+ cx=desk?windowWidth*.64:windowWidth*.5; cy=desk?windowHeight*.5:windowHeight*.33;
+ S=desk?Math.min(windowWidth*.27,windowHeight*.38):Math.min(windowWidth*.34,windowHeight*.24);
+ R=constrain(S*.16,16,36);
+}
+function spawn(n){for(let i=0;i<n;i++)P.push({x:random(width),y:random(height),vx:0,vy:0,s:random(1.2,2.6),rgb:rgb(random(PAL))});}
+function setup(){
+ const c=createCanvas(windowWidth,windowHeight);
+ ctx=drawingContext; layout(); pixelDensity(Math.min(2,window.devicePixelRatio||1));
+ spawn(constrain(Math.floor(width*height/15000),55,120));
+ background(14,16,34); textFont('DM Sans');
+ c.elt.addEventListener('pointerdown',e=>{c.elt._d={x:e.clientX,y:e.clientY,t:performance.now()}});
+ c.elt.addEventListener('pointerup',e=>{const d=c.elt._d; if(!d)return; c.elt._d=null;
+  if(Math.hypot(e.clientX-d.x,e.clientY-d.y)>10||performance.now()-d.t>600)return;
+  if(hov>=0){pin=pin===hov?-1:hov;} else {pin=-1;plant(e.clientX,e.clientY);} });
+ window.addEventListener('pointermove',e=>{mx=e.clientX;my=e.clientY;over=e.target===c.elt;});
+ document.addEventListener('pointerleave',()=>{over=false;mx=my=-999});
+ setMode('hero'); upd();
+}
+function windowResized(){resizeCanvas(windowWidth,windowHeight);layout();background(14,16,34);}
+
+function setMode(m){
+ mode=m; ep=0; pin=-1; const d=M[m]; waves.push({x:cx,y:cy,t:millis(),rgb:rgb(TINT[m]||'#ffc857')}); if(typeof mark==='function')mark();
+ d.nodes.forEach((nd,i)=>{if(!nodes[i])nodes[i]={x:cx,y:cy,r:0,a:0}; nodes[i].d=nd; nodes[i].ta=1;});
+ for(let i=d.nodes.length;i<nodes.length;i++)nodes[i].ta=0;
+}
+function plant(x,y,txt,home){
+ const near=P.map(p=>({p,d:Math.hypot(p.x-x,p.y-y)})).sort((a,b)=>a.d-b.d).slice(0,home?2:3).map(o=>o.p); if(home)near.push(home); burst(x,y);
+ P.push({x,y,vx:0,vy:0,s:4.5,rgb:rgb(home?home.d.c:random(PAL)),idea:1,born:millis(),links:near,txt,home});
+ ideas++; if(P.length>260){const i=P.findIndex(p=>!p.idea);if(i>=0)P.splice(i,1);} upd();
+}
+const SP=[];let waves=[];
+function burst(x,y){
+ for(let i=0;i<26;i++){const a=random(TWO_PI),v=random(1,5);SP.push({x,y,vx:Math.cos(a)*v,vy:Math.sin(a)*v,l:1,rgb:rgb(random(PAL))});}
+ waves.push({x,y,t:millis(),rgb:[255,255,255]});
+ for(const p of P){const dx=p.x-x,dy=p.y-y,d=Math.hypot(dx,dy);if(d<240&&d>1){p.vx+=dx/d*(1-d/240)*7;p.vy+=dy/d*(1-d/240)*7;}}
+}
+function upd(){el('cnt').innerHTML=ideas?`<b>${ideas}</b> ${ideas===1?'idea plantada':'ideas plantadas'} · <b>${ideas*3}</b> conexiones`:'Aún sin ideas plantadas';}
+
+function show(){
+ const i=hov>=0?hov:pin, n=i>=0&&nodes[i]&&nodes[i].ta?nodes[i].d:null, key=n?n.l:'';
+ if(key===shown)return; shown=key; const f=el('info');
+ if(!n){f.classList.remove('on');return;}
+ el('ik').textContent=n.k; el('ik').style.color=n.c; el('it').textContent=n.t; el('ip').textContent=n.p; f.classList.add('on');
+}
+
+function draw(){
+ const c=ctx,t=frameCount*.004,d=M[mode],sp=calm?.15:.6;
+ c.fillStyle='rgba(14,16,34,.3)'; c.fillRect(0,0,width,height);
+ const tg=rgb(TINT[mode]||'#9b8cff');for(let k=0;k<3;k++)tint[k]+=(tg[k]-tint[k])*.03;
+ for(let k=0;k<2;k++){const nx=cx+Math.cos(t*3+k*3)*S*.9,ny=cy+Math.sin(t*2.3+k*2)*S*.7,g=c.createRadialGradient(nx,ny,0,nx,ny,S*1.5);g.addColorStop(0,rr(tint,.09));g.addColorStop(1,rr(tint,0));c.fillStyle=g;c.fillRect(0,0,width,height);}
+ curL+=(d.link-curL)*.04; ambA+=((d.nodes.length?.4:1)-ambA)*.05; ringA+=((d.rings?1:0)-ringA)*.06; ep=Math.min(1,ep+.014);
+ // ambient
+ for(const p of P){
+  const a=noise(p.x*.002,p.y*.002,t)*TWO_PI*2, k=p.idea?.5:1;
+  p.vx+=(Math.cos(a)*sp*k-p.vx)*.04; p.vy+=(Math.sin(a)*sp*k-p.vy)*.04;
+  if(over&&!calm){const dx=mx-p.x,dy=my-p.y,dd=Math.hypot(dx,dy);if(dd<200&&dd>2){p.vx+=dx/dd*.03;p.vy+=dy/dd*.03;}}
+  if(p.home&&mode==='play'){const dx=p.home.x-p.x,dy=p.home.y-p.y,dd=Math.hypot(dx,dy)||1,k=(dd-110)*.0009;p.vx+=dx/dd*k;p.vy+=dy/dd*k;}
+  p.x+=p.vx;p.y+=p.vy; if(p.x<-20)p.x=width+20; if(p.x>width+20)p.x=-20; if(p.y<-20)p.y=height+20; if(p.y>height+20)p.y=-20;
+ }
+ if(curL>3){c.lineWidth=.8;const L2=curL*curL;
+  for(let i=0;i<P.length;i++)for(let j=i+1;j<P.length;j++){
+   const dx=P[i].x-P[j].x,dy=P[i].y-P[j].y,q=dx*dx+dy*dy;
+   if(q<L2){c.strokeStyle=rr(P[i].rgb,(1-Math.sqrt(q)/curL)*.5*ambA);c.beginPath();c.moveTo(P[i].x,P[i].y);c.lineTo(P[j].x,P[j].y);c.stroke();}
+  }}
+ if(over&&mx>0){for(const p of P){const dd=Math.hypot(p.x-mx,p.y-my);if(dd<140){c.strokeStyle=rr(p.rgb,(1-dd/140)*.55);c.beginPath();c.moveTo(mx,my);c.lineTo(p.x,p.y);c.stroke();}}}
+ const now=millis();
+ for(const p of P){
+  if(p.idea){const age=now-p.born,g=Math.min(1,age/700);
+   c.lineWidth=1.4;
+   for(const q of p.links){c.strokeStyle=rr(p.rgb,.75);c.beginPath();c.moveTo(p.x,p.y);c.lineTo(p.x+(q.x-p.x)*g,p.y+(q.y-p.y)*g);c.stroke();}
+   if(age<1800){c.strokeStyle=rr(p.rgb,.8*(1-age/1800));c.lineWidth=2;c.beginPath();c.arc(p.x,p.y,10+age*.06,0,TWO_PI);c.stroke();}
+   if(p.txt){c.fillStyle=rr([243,238,227],Math.min(1,age/500)*.95);c.font='500 12.5px "DM Sans",sans-serif';c.textAlign='center';c.fillText(p.txt,p.x,p.y-14);}c.shadowColor=rr(p.rgb,1);c.shadowBlur=18;c.fillStyle='#fff';c.beginPath();c.arc(p.x,p.y,p.s,0,TWO_PI);c.fill();c.shadowBlur=0;
+  } else {c.fillStyle=rr(p.rgb,.15+.7*ambA);c.beginPath();c.arc(p.x,p.y,p.s,0,TWO_PI);c.fill();}
+ }
+ for(let i=SP.length-1;i>=0;i--){const s=SP[i];s.x+=s.vx;s.y+=s.vy;s.vx*=.95;s.vy*=.95;s.l-=.02;if(s.l<=0){SP.splice(i,1);continue;}c.fillStyle=rr(s.rgb,s.l);c.beginPath();c.arc(s.x,s.y,2.2*s.l,0,TWO_PI);c.fill();}
+ waves=waves.filter(w=>now-w.t<1400);c.lineWidth=2;for(const w of waves){const u=(now-w.t)/1400;c.strokeStyle=rr(w.rgb,.5*(1-u));c.beginPath();c.arc(w.x,w.y,u*Math.max(width,height)*.5,0,TWO_PI);c.stroke();}
+ // rings
+ if(ringA>.02&&M.actors.rings){c.setLineDash([3,7]);c.lineWidth=1;c.strokeStyle=rr([243,238,227],.22*ringA);
+  for(const r of M.actors.rings){c.beginPath();c.arc(cx,cy,r*S,0,TWO_PI);c.stroke();}c.setLineDash([]);}
+ // nodes: update
+ hov=-1;
+ nodes.forEach((n,i)=>{
+  const dd=n.d; n.a+=(n.ta-n.a)*.08;
+  const tx=cx+dd.x*S,ty=cy+dd.y*S; n.x+=(tx-n.x)*.08; n.y+=(ty-n.y)*.08;
+  if(over&&n.ta&&Math.hypot(mx-n.x,my-n.y)<n.r+10)hov=i;
+ });
+ nodes.forEach((n,i)=>{const tr=R*(n.d.sz||1)*(i===hov||i===pin?1.18:1)*n.ta; n.r+=(tr-n.r)*.12;});
+ while(nodes.length&&nodes[nodes.length-1].ta===0&&nodes[nodes.length-1].a<.02)nodes.pop();
+ document.querySelector('canvas').style.cursor=hov>=0?'pointer':'crosshair';
+ // edges
+ c.lineWidth=1.6;
+ d.edges.forEach((e,ei)=>{
+  const A=nodes[e[0]],B=nodes[e[1]]; if(!A||!B)return;
+  const al=Math.min(A.a,B.a),mxp=(A.x+B.x)/2,myp=(A.y+B.y)/2,dx=B.x-A.x,dy=B.y-A.y,k=(ei%2?.14:-.14);
+  const qx=mxp-dy*k,qy=myp+dx*k,N=24,m=Math.floor(N*ep);
+  c.strokeStyle=rgba(A.d.c,.55*al); if(d.dash)c.setLineDash([6,6]);
+  c.beginPath();c.moveTo(A.x,A.y);
+  for(let s=1;s<=m;s++){const u=s/N;c.lineTo((1-u)*(1-u)*A.x+2*(1-u)*u*qx+u*u*B.x,(1-u)*(1-u)*A.y+2*(1-u)*u*qy+u*u*B.y);}
+  c.stroke();c.setLineDash([]);
+  if(ep>.95)for(let f=0;f<2;f++){const u=(frameCount*.005*(calm?.2:1)+ei*.31+f*.5)%1;
+   c.fillStyle=rgba(B.d.c,.95*al);c.beginPath();c.arc((1-u)*(1-u)*A.x+2*(1-u)*u*qx+u*u*B.x,(1-u)*(1-u)*A.y+2*(1-u)*u*qy+u*u*B.y,2.6,0,TWO_PI);c.fill();}
+ });
+ // nodes: draw
+ c.textAlign='center';
+ nodes.forEach((n,i)=>{
+  if(n.a<.02||n.r<1)return; const dd=n.d,hot=i===hov||i===pin;
+  c.shadowColor=rgba(dd.c,.9);c.shadowBlur=hot?42:22;
+  c.beginPath();c.arc(n.x,n.y,n.r,0,TWO_PI);
+  if(dd.h){c.fillStyle=rgba(dd.c,.06*n.a);c.fill();c.shadowBlur=hot?24:6;c.setLineDash([5,5]);c.lineWidth=2;c.strokeStyle=rgba(dd.c,.9*n.a);c.stroke();c.setLineDash([]);}
+  else{c.fillStyle=rgba(dd.c,(hot?.95:.82)*n.a);c.fill();}
+  c.shadowBlur=0;
+  c.strokeStyle=rgba(dd.c,.25*n.a);c.lineWidth=1.2;c.beginPath();c.arc(n.x,n.y,n.r+7+3*Math.sin(frameCount*.04+i),0,TWO_PI);c.stroke();
+  if(dd.n){c.fillStyle=rgba('#0e1022',n.a);c.font=`700 ${n.r*.72}px Fraunces,Georgia,serif`;c.fillText(dd.n,n.x,n.y+n.r*.25);}
+  c.fillStyle=rgba('#f3eee3',n.a);c.font=`${hot?700:500} ${desk?13:11}px "DM Sans",sans-serif`;
+  c.fillText(dd.l,n.x,n.y+n.r+(desk?19:15));
+ });
+ show();
+}
+
+// jugar
+function sow(d){
+ const inp=el('idt'),v=inp.value.trim(); if(!v){inp.focus();return;}
+ const h=nodes[d]; if(mode!=='play'||!h)return; const a=random(TWO_PI);
+ plant(h.x+Math.cos(a)*random(70,130),h.y+Math.sin(a)*random(70,130),v,h); inp.value='';
+}
+document.querySelectorAll('#play button').forEach(b=>b.addEventListener('click',()=>sow(+b.dataset.d)));
+el('idt').addEventListener('keydown',e=>{if(e.key==='Enter')sow(0);});
+// navegación por puntos
+const steps=[...document.querySelectorAll('.step')],dots=document.createElement('nav');dots.id='dots';dots.setAttribute('aria-label','Secciones');
+steps.forEach((s,i)=>{const b=document.createElement('button');b.setAttribute('aria-label','Sección '+(i+1));b.onclick=()=>s.scrollIntoView({behavior:calm?'auto':'smooth'});dots.appendChild(b);});
+document.body.appendChild(dots);
+const mark=()=>[...dots.children].forEach((b,i)=>b.classList.toggle('on',steps[i].dataset.mode===mode));
+// scroll story
+const io=new IntersectionObserver(es=>{es.forEach(e=>{if(e.isIntersecting&&e.target.dataset.mode!==mode&&typeof setMode==='function'&&ctx)setMode(e.target.dataset.mode);});},{threshold:.55});
+document.querySelectorAll('.step').forEach(s=>io.observe(s));
+addEventListener('scroll',()=>{const h=document.documentElement.scrollHeight-innerHeight;el('bar').style.width=(h>0?scrollY/h*100:0)+'%';},{passive:true});
+</script>
+</body>
+</html>
